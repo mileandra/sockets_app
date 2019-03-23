@@ -13,7 +13,6 @@
                         'Elixir.SocketsApp.Challenges.Task',
                         'Elixir.SocketsApp.Challenges.Team',
                         'Elixir.SocketsApp.Challenges.TeamBuilder',
-                        'Elixir.SocketsApp.Challenges.TeamUser',
                         'Elixir.SocketsApp.DataCase','Elixir.SocketsApp.Repo',
                         'Elixir.SocketsApp.ValidationHelpers',
                         'Elixir.SocketsAppWeb','Elixir.SocketsAppWeb.Auth',

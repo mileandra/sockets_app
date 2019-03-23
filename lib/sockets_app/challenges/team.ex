@@ -2,11 +2,13 @@ defmodule SocketsApp.Challenges.Team do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias SocketsApp.Challenges.Challenge
+  alias SocketsApp.Accounts.User
+  alias SocketsApp.Challenges.{Challenge}
   alias SocketsApp.ValidationHelpers
 
   schema "teams" do
     belongs_to :challenge, Challenge, on_replace: :update
+    has_many :users, User
 
     timestamps()
   end
@@ -16,5 +18,6 @@ defmodule SocketsApp.Challenges.Team do
     team
     |> cast(attrs, [:challenge_id])
     |> ValidationHelpers.validate_belongs_to(:challenge)
+    |> cast_assoc(:users)
   end
 end
