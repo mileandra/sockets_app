@@ -1,0 +1,5 @@
+<h1>Please Enter your name</h1>
+<%= form_for @conn, Routes.session_path(@conn, :create), [as: :session], fn f -> %>
+  <%= text_input(f, :name) %>
+  <%= submit("Join")%>
+<% end %>
