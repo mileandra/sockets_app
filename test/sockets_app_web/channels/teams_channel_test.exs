@@ -1,9 +1,12 @@
 defmodule SocketsAppWeb.TeamsChannelTest do
   use SocketsAppWeb.ChannelCase
+  alias SocketsApp.Accounts
 
   setup do
+    {:ok, user} = Accounts.create_user(%{name: "Some Name", role: :student})
+
     {:ok, _, socket} =
-      socket(SocketsAppWeb.UserSocket, "user_id", %{some: :assign})
+      socket(SocketsAppWeb.UserSocket, "user_id", %{user_id: user.id})
       |> subscribe_and_join(SocketsAppWeb.TeamsChannel, "teams:lobby")
 
     {:ok, socket: socket}

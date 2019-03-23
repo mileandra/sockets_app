@@ -1,8 +1,8 @@
 defmodule SocketsAppWeb.TeamsChannel do
   use SocketsAppWeb, :channel
 
-  def join("teams:lobby", payload, socket) do
-    if authorized?(payload) do
+  def join("teams:lobby", _payload, socket) do
+    if authorized?(socket) do
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
@@ -23,7 +23,7 @@ defmodule SocketsAppWeb.TeamsChannel do
   end
 
   # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
+  defp authorized?(socket) do
+    Map.has_key?(socket.assigns, :user_id)
   end
 end
