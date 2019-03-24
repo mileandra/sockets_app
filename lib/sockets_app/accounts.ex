@@ -22,6 +22,23 @@ defmodule SocketsApp.Accounts do
   end
 
   @doc """
+  Returns all given users as a map of "id" => data pairs
+  """
+  def get_users_map(ids) do
+    query = from(u in User,
+    select: {u.id, u},
+    preload: [:team],
+    where: u.id in ^ids)
+
+    users = query
+    |> Repo.all()
+
+    users
+    |> Enum.map(fn {k, v} -> {to_string(k), v} end)
+    |> Enum.into(%{})
+  end
+
+  @doc """
   Gets a single user.
 
   Raises `Ecto.NoResultsError` if the User does not exist.

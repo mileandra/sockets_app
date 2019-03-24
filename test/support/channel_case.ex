@@ -32,6 +32,9 @@ defmodule SocketsAppWeb.ChannelCase do
       Ecto.Adapters.SQL.Sandbox.mode(SocketsApp.Repo, {:shared, self()})
     end
 
+    :ok = Supervisor.terminate_child(SocketsApp.Supervisor, SocketsAppWeb.Presence)
+    {:ok, _} = Supervisor.restart_child(SocketsApp.Supervisor, SocketsAppWeb.Presence)
+
     :ok
   end
 end

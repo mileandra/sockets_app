@@ -123,7 +123,6 @@ defmodule SocketsApp.ChallengesTest do
 
   describe "teams" do
     alias SocketsApp.Challenges.Team
-    alias SocketsApp.Repo
 
     @valid_attrs %{challenge: %{name: "test"}}
     @update_attrs %{}

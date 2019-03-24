@@ -1,24 +1,15 @@
-defmodule SocketsAppWeb.TeamsChannelTest do
-  use SocketsAppWeb.ChannelCase, async: false
+defmodule SocketsAppWeb.TeacherChannelTest do
+  use SocketsAppWeb.ChannelCase
   alias SocketsApp.Accounts
-  alias SocketsAppWeb.Presence
 
   setup do
-    {:ok, user} = Accounts.create_user(%{name: "Some Name", role: :student})
+    {:ok, user} = Accounts.create_user(%{name: "Some Name", role: :teacher})
 
     {:ok, _, socket} =
       socket(SocketsAppWeb.UserSocket, "user_id", %{user_id: user.id})
-      |> subscribe_and_join(SocketsAppWeb.TeamsChannel, "teams:lobby")
+      |> subscribe_and_join(SocketsAppWeb.TeacherChannel, "teacher:lobby")
 
-      :timer.sleep(100)
     {:ok, socket: socket}
-  end
-
-  test "join creates presence", %{socket: socket} do
-    assert presences = Presence.list("teams:lobby")
-    assert length(Map.keys(presences)) == 1
-    [{_key, %{user: u}}] = Map.to_list(presences)
-    assert u.id == socket.assigns.user_id
   end
 
   test "ping replies with status ok", %{socket: socket} do
@@ -26,7 +17,7 @@ defmodule SocketsAppWeb.TeamsChannelTest do
     assert_reply ref, :ok, %{"hello" => "there"}
   end
 
-  test "shout broadcasts to teams:lobby", %{socket: socket} do
+  test "shout broadcasts to teacher:lobby", %{socket: socket} do
     push socket, "shout", %{"hello" => "all"}
     assert_broadcast "shout", %{"hello" => "all"}
   end

@@ -11,9 +11,10 @@ defmodule SocketsApp.Application do
       # Start the Ecto repository
       SocketsApp.Repo,
       # Start the endpoint when the application starts
-      SocketsAppWeb.Endpoint
+      SocketsAppWeb.Endpoint,
       # Starts a worker by calling: SocketsApp.Worker.start_link(arg)
       # {SocketsApp.Worker, arg},
+      SocketsAppWeb.Presence
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
