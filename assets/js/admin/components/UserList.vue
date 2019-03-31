@@ -14,7 +14,6 @@
 export default {
   computed: {
     presences () {
-      console.log(this.$store.getters.presences)
       return this.$store.getters.presences
     }
   }

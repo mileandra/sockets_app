@@ -9,6 +9,9 @@ Vue.use(Vuex)
 
 const state = {
   presences: {},
+  currentUser: null,
+  teams: [],
+  challenge: null,
   message: null
 }
 

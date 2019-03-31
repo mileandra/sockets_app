@@ -4,6 +4,7 @@ import { Presence } from 'phoenix'
 socket.connect()
 
 let teamsChannel
+let teacherChannel
 let presences = {}
 
 function bindTeamListeners(context, channel) {
@@ -26,14 +27,70 @@ function bindTeamListeners(context, channel) {
   })
 }
 
+function bindTeacherListeners (context, channel) {
+
+}
+
+function sendRequest(channel, method, payload = {}) {
+  const promise = new Promise((resolve, reject) => {
+    channel.push(method, payload)
+      .receive('ok', resp => {
+        resolve(resp)
+      })
+      .receive('error', resp => {
+        reject(resp)
+      })
+  })
+  return promise
+}
+
 export default {
   join (context) {
-    teamsChannel = socket.channel("teams:lobby", {})
-    teamsChannel.join()
-      .receive("ok", resp => {
-        bindTeamListeners(context, teamsChannel)
+    let promise = new Promise((resolve, reject) => {
+      teamsChannel = socket.channel("teams:lobby", {})
+      teamsChannel.join()
+        .receive("ok", resp => {
+          context.commit('setCurrentUser', resp.user)
+          bindTeamListeners(context, teamsChannel)
+        })
+        .receive("error", resp => { console.log("Unable to join", resp) })
+
+      teacherChannel = socket.channel("teacher", {})
+      teacherChannel.join()
+        .receive("ok", () => {
+          bindTeacherListeners(context, teacherChannel)
+          resolve("ok")
+        })
+        .receive("error", resp => { 
+          console.log("Unable to join", resp) 
+          reject(resp)
+        })
       })
-      .receive("error", resp => { console.log("Unable to join", resp) })
+    return promise
+  },
+
+  listChallenges () {
+    return sendRequest(teacherChannel, 'list_challenges')
+  },
+
+  pairTeams ({getters, commit}, challenge_id) {
+    let userIds = []
+    for(let key in getters.presences) {
+      if (getters.presences[key].user.role == 'student') {
+        userIds.push(key)
+      }
+    }
+    let params = {
+      challenge_id: challenge_id,
+      user_ids: userIds
+    }
+    sendRequest(teacherChannel, 'pair_teams', params)
+      .then(resp => {
+        commit('setTeams', resp.teams)
+      }, err => {
+        console.log(err)
+        dispatch('error', 'Unable to pair teams')
+      })
   },
 
   // Messages

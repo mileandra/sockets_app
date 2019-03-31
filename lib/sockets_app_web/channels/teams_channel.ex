@@ -1,15 +1,14 @@
 defmodule SocketsAppWeb.TeamsChannel do
   use SocketsAppWeb, :channel
-  alias SocketsAppWeb.Endpoint
+  # alias SocketsAppWeb.Endpoint
   alias SocketsApp.{Accounts, Challenges}
   alias SocketsAppWeb.Presence
 
   def join("teams:" <> team_id, _payload, socket) do
     if authorized?(socket) do
       user = get_user(socket.assigns.user_id)
-
       send(self(), {:after_join, user, team_id})
-      {:ok, socket}
+      {:ok, %{current_user: user}, socket}
     else
       {:error, %{reason: "unauthorized"}}
     end

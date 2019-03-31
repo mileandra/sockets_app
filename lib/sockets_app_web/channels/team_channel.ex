@@ -23,7 +23,7 @@ defmodule SocketsAppWeb.TeamChannel do
   end
 
   # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
+  defp authorized?(socket) do
+    Map.has_key?(socket.assigns, :user_id)
   end
 end

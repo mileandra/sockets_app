@@ -18,8 +18,10 @@ module.exports = (env, options) => ({
       admin: ['./js/admin.js'].concat(glob.sync('./vendor/**/*.js'))
   },
   output: {
+    chunkFilename: '[id].js',
+    crossOriginLoading: "anonymous",
     filename: '[name].js',
-    path: path.resolve(__dirname, '../priv/static/js')
+    path: path.resolve(__dirname, '../priv/static')
   },
   module: {
     rules: [
@@ -35,13 +37,21 @@ module.exports = (env, options) => ({
         use: [MiniCssExtractPlugin.loader, 'css-loader']
       },
       {
+        test: /\.scss$/,
+        use: [
+            'vue-style-loader', // creates style nodes from JS strings
+            'css-loader', // translates CSS into CommonJS
+            'sass-loader' // compiles Sass to CSS, using Node Sass by default
+        ]
+      },
+      {
         test: /\.vue$/,
         use: 'vue-loader'
       }
     ]
   },
   plugins: [
-    new MiniCssExtractPlugin({ filename: '../css/app.css' }),
+    new MiniCssExtractPlugin({ filename: '../app.css' }),
     new CopyWebpackPlugin([{ from: 'static/', to: '../' }]),
     new VueLoaderPlugin()
   ],
