@@ -54,5 +54,16 @@ defmodule SocketsApp.TeamBuilderTest do
       assert team = Enum.at(teams, 1)
       assert length(team.users) == 3
     end
+
+    test "when only one user is there, it will create a team with one" do
+      user = user_fixture()
+
+      challenge = challenge_fixture()
+
+      assert {:ok, teams} = TeamBuilder.build(challenge, [user])
+      assert length(teams) == 1
+      team = Enum.at(teams, 0)
+      assert length(team.users) == 1
+    end
   end
 end

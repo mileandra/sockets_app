@@ -2,7 +2,8 @@ defmodule SocketsAppWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "teams:*", SocketAppWeb.TeamsChannel
+  channel "teams:*", SocketsAppWeb.TeamsChannel
+  channel "teacher", SocketsAppWeb.TeacherChannel
 
 
   # Socket params are passed from the client and can

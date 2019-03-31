@@ -9,9 +9,16 @@ import css from "../css/app.css"
 //
 // Import dependencies
 //
-import "phoenix_html"
+import socket from './socket'
 
 // Import local files
 //
 // Local files can be imported directly using relative paths, for example:
 // import socket from "./socket"
+socket.connect()
+
+// Now that you are connected, you can join channels with a topic:
+let channel = socket.channel("teams:lobby", {})
+channel.join()
+  .receive("ok", resp => { console.log("Joined successfully", resp) })
+  .receive("error", resp => { console.log("Unable to join", resp) })

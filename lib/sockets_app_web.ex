@@ -50,7 +50,7 @@ defmodule SocketsAppWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
-      import SocketsAppWeb.Auth, only: [authenticate_user: 2]
+      import SocketsAppWeb.Auth, only: [authenticate_user: 2, authenticate_admin: 2]
     end
   end
 

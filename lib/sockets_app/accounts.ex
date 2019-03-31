@@ -21,14 +21,24 @@ defmodule SocketsApp.Accounts do
     Repo.all(User)
   end
 
+  def list_users(ids) do
+    ids
+    |> list_user_query()
+    |> Repo.all()
+  end
+
+  defp list_user_query(ids) do
+    from u in User,
+    where: u.id in ^ids
+  end
+
   @doc """
   Returns all given users as a map of "id" => data pairs
   """
   def get_users_map(ids) do
-    query = from(u in User,
+    query = from(u in list_user_query(ids),
     select: {u.id, u},
-    preload: [:team],
-    where: u.id in ^ids)
+    preload: [:team])
 
     users = query
     |> Repo.all()
@@ -59,6 +69,14 @@ defmodule SocketsApp.Accounts do
   Returns nil if user is not found
   """
   def get_user(id), do: Repo.get(User, id)
+
+  @doc """
+  Tries to find a user by name
+  """
+  def get_teacher(name) do
+    Repo.get_by(User, name: name, role: :teacher)
+  end
+
 
   @doc """
   Creates a user.

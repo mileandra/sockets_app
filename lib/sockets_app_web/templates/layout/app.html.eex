@@ -13,6 +13,16 @@
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
       <%= render @view_module, @view_template, assigns %>
     </main>
-    <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+    <%= if assigns[:user_token] do %>
+    <script type="text/javascript">
+      window.userToken = '<%= @user_token %>'
+    </script>
+    <% end %>
+    <%= if assigns[:current_user] && @current_user.role == :student do %>
+      <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+    <% end %>
+    <%= if assigns[:current_user] && @current_user.role == :teacher do %>
+      <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/admin.js") %>"></script>
+    <% end %>
   </body>
 </html>

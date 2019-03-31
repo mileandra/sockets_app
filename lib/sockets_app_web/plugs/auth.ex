@@ -55,6 +55,20 @@ defmodule SocketsAppWeb.Auth do
     end
   end
 
+  @doc """
+  Handles access restriction for the admin pages
+  """
+  def authenticate_admin(conn, _opts) do
+    if conn.assigns.current_user && conn.assigns.current_user.role == :teacher do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must be logged in as teacher to access this page")
+      |> redirect(to: Routes.admin_session_path(conn, :new))
+      |> halt()
+    end
+  end
+
   defp put_current_user(conn, nil) do
     conn
     |> assign(:current_user, nil)

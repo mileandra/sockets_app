@@ -27,6 +27,17 @@ defmodule SocketsAppWeb.Router do
     get "/", PageController, :index
   end
 
+  scope "/admin", SocketsAppWeb.Admin, as: :admin do
+    pipe_through [:browser]
+    resources "/sessions", SessionController, only: [:new, :create, :delete]
+  end
+
+  scope "/admin", SocketsAppWeb.Admin, as: :admin do
+    pipe_through [:browser, :authenticate_admin]
+
+    get "/", PageController, :index
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", SocketsAppWeb do
   #   pipe_through :api

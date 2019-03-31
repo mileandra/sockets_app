@@ -17,6 +17,9 @@ defmodule SocketsApp.Challenges.TeamBuilder do
 
     {:ok, teams}
   end
+  def build(challenge_id, users) when is_integer(challenge_id) do
+    build(Challenges.get_challenge!(challenge_id), users)
+  end
 
   defp pair_users(users) do
     users
@@ -26,6 +29,7 @@ defmodule SocketsApp.Challenges.TeamBuilder do
     |> Enum.reverse()
   end
 
+  defp maybe_create_team_with_3([head]), do: [head]
   defp maybe_create_team_with_3([head|tail]) do
     if Enum.count(head) == 1 do
       user = Enum.at(head, 0)

@@ -1,13 +1,14 @@
 defmodule SocketsAppWeb.TeamsChannel do
   use SocketsAppWeb, :channel
   alias SocketsAppWeb.Endpoint
-  alias SocketsApp.Accounts
+  alias SocketsApp.{Accounts, Challenges}
   alias SocketsAppWeb.Presence
 
-  def join("teams:lobby", _payload, socket) do
+  def join("teams:" <> team_id, _payload, socket) do
     if authorized?(socket) do
-      send(self(), :after_join)
-      Endpoint.broadcast("teacher:lobby", "student_joined", %{user: get_user(socket.assigns.user_id)})
+      user = get_user(socket.assigns.user_id)
+
+      send(self(), {:after_join, user, team_id})
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
@@ -27,12 +28,12 @@ defmodule SocketsAppWeb.TeamsChannel do
     {:noreply, socket}
   end
 
-  def handle_info(:after_join, socket) do
+  def handle_info({:after_join, user, team}, socket) do
     push(socket, "presence_state", Presence.list(socket))
-    user = get_user(socket.assigns.user_id)
-    {:ok, _} = Presence.track(socket.transport_pid, "teams:lobby", "#{user.id}", %{
+    {:ok, _} = Presence.track(socket.transport_pid, "teams:#{team}", "#{user.id}", %{
       user_id: user.id,
-      user_name: user.name,
+      role: user.role,
+      team_id: team,
       online_at: inspect(System.system_time(:second))
     })
     {:noreply, socket}
