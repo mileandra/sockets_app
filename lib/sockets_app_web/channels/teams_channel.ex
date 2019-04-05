@@ -1,14 +1,25 @@
 defmodule SocketsAppWeb.TeamsChannel do
   use SocketsAppWeb, :channel
   # alias SocketsAppWeb.Endpoint
-  alias SocketsApp.{Accounts, Challenges}
+  alias SocketsApp.{Accounts, Challenges, Repo}
   alias SocketsAppWeb.Presence
+
+  def join("teams:lobby", _payload, socket) do
+    if authorized?(socket) do
+      user = get_user(socket.assigns.user_id)
+      send(self(), {:after_join, user, "lobby"})
+      {:ok, %{current_user: user}, socket}
+    else
+      {:error, %{reason: "unauthorized"}}
+    end
+  end
 
   def join("teams:" <> team_id, _payload, socket) do
     if authorized?(socket) do
       user = get_user(socket.assigns.user_id)
       send(self(), {:after_join, user, team_id})
-      {:ok, %{current_user: user}, socket}
+      team = get_team(team_id)
+      {:ok, %{team: team}, socket}
     else
       {:error, %{reason: "unauthorized"}}
     end
@@ -45,5 +56,11 @@ defmodule SocketsAppWeb.TeamsChannel do
 
   defp get_user(id) do
     Accounts.get_user!(id)
+  end
+
+  defp get_team(team_id) do
+    team_id
+    |> Challenges.get_team!()
+    |> Repo.preload([challenge: [:tasks], answers: []])
   end
 end

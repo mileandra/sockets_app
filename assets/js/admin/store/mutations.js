@@ -1,4 +1,7 @@
 export default {
+  setTeacherConnected (state, connect) {
+    state.teacherConnected = connect
+  },
   setPresences (state, presences) {
     state.presences = presences
   },

@@ -178,4 +178,63 @@ defmodule SocketsApp.ChallengesTest do
       assert %Ecto.Changeset{} = Challenges.change_team(team)
     end
   end
+
+  describe "answers" do
+    alias SocketsApp.Challenges.Answer
+
+    @valid_attrs %{value: "some value"}
+    @update_attrs %{value: "some updated value"}
+    @invalid_attrs %{value: nil}
+
+    def answer_fixture(attrs \\ %{}) do
+      {:ok, answer} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Challenges.create_answer()
+
+      answer
+    end
+
+    test "list_answers/0 returns all answers" do
+      answer = answer_fixture()
+      assert Challenges.list_answers() == [answer]
+    end
+
+    test "get_answer!/1 returns the answer with given id" do
+      answer = answer_fixture()
+      assert Challenges.get_answer!(answer.id) == answer
+    end
+
+    test "create_answer/1 with valid data creates a answer" do
+      assert {:ok, %Answer{} = answer} = Challenges.create_answer(@valid_attrs)
+      assert answer.value == "some value"
+    end
+
+    test "create_answer/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Challenges.create_answer(@invalid_attrs)
+    end
+
+    test "update_answer/2 with valid data updates the answer" do
+      answer = answer_fixture()
+      assert {:ok, %Answer{} = answer} = Challenges.update_answer(answer, @update_attrs)
+      assert answer.value == "some updated value"
+    end
+
+    test "update_answer/2 with invalid data returns error changeset" do
+      answer = answer_fixture()
+      assert {:error, %Ecto.Changeset{}} = Challenges.update_answer(answer, @invalid_attrs)
+      assert answer == Challenges.get_answer!(answer.id)
+    end
+
+    test "delete_answer/1 deletes the answer" do
+      answer = answer_fixture()
+      assert {:ok, %Answer{}} = Challenges.delete_answer(answer)
+      assert_raise Ecto.NoResultsError, fn -> Challenges.get_answer!(answer.id) end
+    end
+
+    test "change_answer/1 returns a answer changeset" do
+      answer = answer_fixture()
+      assert %Ecto.Changeset{} = Challenges.change_answer(answer)
+    end
+  end
 end

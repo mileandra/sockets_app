@@ -4,7 +4,7 @@ defmodule SocketsAppWeb.UserSocket do
   ## Channels
   channel "teams:*", SocketsAppWeb.TeamsChannel
   channel "teacher", SocketsAppWeb.TeacherChannel
-
+  channel "user:*", SocketsAppWeb.UserChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After

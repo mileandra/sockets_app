@@ -11,12 +11,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
-  computed: {
-    presences () {
-      return this.$store.getters.presences
-    }
-  }
+  computed: mapState(['presences'])
 }
 </script>
 

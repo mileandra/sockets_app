@@ -58,7 +58,9 @@ module.exports = (env, options) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './js'),
-      Admin: path.resolve(__dirname, './js/admin')
+      Admin: path.resolve(__dirname, './js/admin'),
+      Student: path.resolve(__dirname, './js/student'),
+      Shared: path.resolve(__dirname, './js/shared')
     }
   }
 });

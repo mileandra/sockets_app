@@ -1,23 +1,22 @@
 <template>
   <div>
     <flash />
-    <router-view v-if="teacherConnected" />
+    <router-view v-if="connected" />
   </div>
 </template>
 
 <script>
 import Flash from 'Shared/components/Flash.vue'
 import { mapState } from 'vuex'
-
 export default {
   components: {
     Flash
   },
-  computed: mapState(['teacherConnected']),
+  computed: mapState(['connected']),
   mounted () {
     this.$store.dispatch('join')
       .then(() => {
-        this.$router.push({name: 'new'})
+        
       }, err => {
         alert("Unable to join")
       })

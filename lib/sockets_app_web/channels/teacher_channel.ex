@@ -1,7 +1,8 @@
 defmodule SocketsAppWeb.TeacherChannel do
   use SocketsAppWeb, :channel
 
-  alias SocketsApp.{Accounts, Challenges}
+  alias SocketsApp.{Accounts, Challenges, Repo}
+  alias SocketsAppWeb.Endpoint
 
   def join("teacher", _payload, socket) do
     if authorized_teacher?(socket) do
@@ -35,7 +36,34 @@ defmodule SocketsAppWeb.TeacherChannel do
     challenge = Challenges.get_challenge!(ch_id)
     users = Accounts.list_users(user_ids)
     {:ok, teams} = Challenges.TeamBuilder.build(challenge, users)
+    teams
+    |> create_initial_answers(challenge)
+    |> notify_of_pairing()
     {:reply, {:ok, %{teams: teams, challenge: challenge}}, socket}
+  end
+
+  defp create_initial_answers(teams, challenge) do
+    challenge = Repo.preload(challenge, [:tasks])
+
+    Enum.map(teams, fn team ->
+      Enum.each(challenge.tasks, fn t ->
+        Challenges.create_answer(%{
+          team_id: team.id,
+          task_id: t.id,
+          value: ""
+        }) |> IO.inspect()
+      end)
+      team
+    end)
+  end
+
+  # Send a notification to each user about what team he or she is in
+  defp notify_of_pairing(teams) do
+    Enum.map(teams, fn t ->
+      Enum.map(t.users, fn u ->
+        Endpoint.broadcast("user:#{u.id}", "paired", %{team_id: t.id})
+      end)
+    end)
   end
 
   # Add authorization logic here as required.

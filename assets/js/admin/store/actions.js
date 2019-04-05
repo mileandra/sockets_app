@@ -35,6 +35,7 @@ function sendRequest(channel, method, payload = {}) {
   const promise = new Promise((resolve, reject) => {
     channel.push(method, payload)
       .receive('ok', resp => {
+        console.log('method', resp)
         resolve(resp)
       })
       .receive('error', resp => {
@@ -50,7 +51,7 @@ export default {
       teamsChannel = socket.channel("teams:lobby", {})
       teamsChannel.join()
         .receive("ok", resp => {
-          context.commit('setCurrentUser', resp.user)
+          context.commit('setCurrentUser', resp.current_user)
           bindTeamListeners(context, teamsChannel)
         })
         .receive("error", resp => { console.log("Unable to join", resp) })
@@ -58,10 +59,12 @@ export default {
       teacherChannel = socket.channel("teacher", {})
       teacherChannel.join()
         .receive("ok", () => {
+          context.commit('setTeacherConnected', true)
           bindTeacherListeners(context, teacherChannel)
           resolve("ok")
         })
         .receive("error", resp => { 
+          context.commit('setTeacherConnected', true)
           console.log("Unable to join", resp) 
           reject(resp)
         })
@@ -73,10 +76,10 @@ export default {
     return sendRequest(teacherChannel, 'list_challenges')
   },
 
-  pairTeams ({getters, commit}, challenge_id) {
+  pairTeams ({state, commit}, challenge_id) {
     let userIds = []
-    for(let key in getters.presences) {
-      if (getters.presences[key].user.role == 'student') {
+    for(let key in state.presences) {
+      if (state.presences[key].user.role == 'student') {
         userIds.push(key)
       }
     }
@@ -87,6 +90,7 @@ export default {
     sendRequest(teacherChannel, 'pair_teams', params)
       .then(resp => {
         commit('setTeams', resp.teams)
+        commit('setChallenge', resp.challenge)
       }, err => {
         console.log(err)
         dispatch('error', 'Unable to pair teams')

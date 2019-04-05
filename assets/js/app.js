@@ -1,23 +1,16 @@
-// We need to import the CSS so that webpack will load it.
-// The MiniCssExtractPlugin is used to separate it out into
-// its own CSS file.
+import Vue from 'vue'
+import App from 'Student/App.vue'
 
-// webpack automatically bundles all modules in your
-// entry points. Those entry points can be configured
-// in "webpack.config.js".
-//
-// Import dependencies
-//
-import socket from './socket'
+import store from 'Student/store'
+import router from 'Student/routes'
 
-// Import local files
-//
-// Local files can be imported directly using relative paths, for example:
-// import socket from "./socket"
-socket.connect()
+Vue.config.productionTip = false
 
-// Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("teams:lobby", {})
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+
+new Vue({
+  store,
+  router,
+  render: h => h(App)
+}).$mount('#app')
+
+

@@ -20,6 +20,11 @@ export default {
       challenge_id: "",
     }
   },
+  computed: {
+    connected () {
+      return this.$store.state.teacherConnected
+    }
+  },
   methods: {
     loadChallenges () {
       this.$store.dispatch('listChallenges')
@@ -34,12 +39,21 @@ export default {
       this.$store.dispatch('pairTeams', parseInt(this.challenge_id))
         .then(() => {
           this.$store.dispatch('success', "Teams Paired")
-          this.$router.push({name: 'teams'})
+          this.$router.push({name: 'challenge', params: {id: this.challenge_id}})
         })
     }
   },
   mounted () {
-    this.loadChallenges()
+    if (this.connected) {
+      this.loadChallenges()
+    }
+  },
+  watch: {
+    connected: function(status) {
+      if (status) {
+        this.loadChallenges()
+      }
+    }
   }
 }
 </script>

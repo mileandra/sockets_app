@@ -7,10 +7,8 @@ import mutations from './mutations'
 Vue.use(Vuex)
 
 const state = {
-  presences: {},
-  teacherConnected: false,
+  connected: false,
   currentUser: null,
-  teams: [],
   challenge: null,
   message: null
 }

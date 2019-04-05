@@ -1,6 +1,8 @@
 import Router from 'vue-router'
 import Vue from 'vue'
 import Home from 'Admin/views/Home.vue'
+import New from 'Admin/views/New.vue'
+import Challenge from 'Admin/views/Challenge.vue'
 
 Vue.use(Router)
 
@@ -13,7 +15,12 @@ const routes = [
   {
     path: '/new',
     name: 'new',
-    component: () => import(/* webpackChunkName: "new" */ 'Admin/views/New.vue'),
+    component: New
+  },
+  {
+    path: '/challenge/:id',
+    name: 'challenge',
+    component: Challenge
   }
 ]
 
