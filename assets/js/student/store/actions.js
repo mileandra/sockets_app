@@ -8,8 +8,11 @@ let currentTeamChannel
 
 function bindTeamListeners(context, channel) {
   channel.on('answer_updated', resp => {
-    console.log(resp)
     context.commit('setSocketMessage', {key: 'answerUpdated', message: resp})
+  })
+
+  channel.on('teacher_message', resp => {
+    context.commit('setMessage', {type: 'info', message: resp.message})
   })
 }
 

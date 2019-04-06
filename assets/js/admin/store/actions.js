@@ -97,6 +97,13 @@ export default {
       })
   },
 
+  sendTeacherMessage ({state}, message) {
+    teacherChannel.push('send_challenge_message', {
+      challenge_id: state.challenge.id,
+      message: message
+    })
+  },
+
   // Messages
   addMessage({commit}, message) {
     commit('setMessage', message)

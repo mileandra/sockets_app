@@ -21,5 +21,9 @@ export default {
 
   setSocketMessage (state, message) {
     state.socketMessage = message
+  },
+
+  setMessage (state, message) {
+    state.message = message
   }
 }

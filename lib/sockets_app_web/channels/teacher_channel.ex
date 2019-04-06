@@ -42,6 +42,15 @@ defmodule SocketsAppWeb.TeacherChannel do
     {:reply, {:ok, %{teams: teams, challenge: challenge}}, socket}
   end
 
+  # Send a message to all teams in current challenge
+  def handle_in("send_challenge_message", %{"challenge_id" => ch_id, "message" => message}, socket) do
+    challenge = Challenges.get_challenge!(ch_id) |> Repo.preload(:teams)
+    Enum.each(challenge.teams, fn %{id: t_id} ->
+      Endpoint.broadcast("teams:#{t_id}", "teacher_message", %{message: message})
+    end)
+    {:reply, {:ok, %{message: "message_sent"}}, socket}
+  end
+
   defp create_initial_answers(teams, challenge) do
     challenge = Repo.preload(challenge, [:tasks])
 

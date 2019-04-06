@@ -2,14 +2,14 @@ defmodule SocketsApp.Challenges.Challenge do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias SocketsApp.Challenges.Task
+  alias SocketsApp.Challenges.{Task, Team}
 
 
   schema "challenges" do
     field :name, :string
 
     has_many :tasks, Task
-
+    has_many :teams, Team
     timestamps()
   end
 

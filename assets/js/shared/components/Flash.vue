@@ -8,13 +8,13 @@
 export default {
   computed: {
     message () {
-      return this.$store.getters.message
+      return this.$store.state.message
     },
     messageType () {
       if (this.message.type == 'warn') {
-        return 'danger'
+        return 'alert-danger'
       }
-      return this.message.type
+      return 'alert-' + this.message.type
     }
   }
 }
