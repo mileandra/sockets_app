@@ -6,8 +6,6 @@ defmodule SocketsApp.Challenges.Team do
   alias SocketsApp.Challenges.{Challenge, Answer}
   alias SocketsApp.ValidationHelpers
 
-  @derive {Jason.Encoder, only: [:id, :challenge_id, :users]}
-
   schema "teams" do
     belongs_to :challenge, Challenge, on_replace: :update
     has_many :users, User

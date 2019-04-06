@@ -2,7 +2,7 @@ defmodule SocketsAppWeb.TeamsChannel do
   use SocketsAppWeb, :channel
   # alias SocketsAppWeb.Endpoint
   alias SocketsApp.{Accounts, Challenges, Repo}
-  alias SocketsAppWeb.Presence
+  alias SocketsAppWeb.{Presence, Endpoint}
 
   def join("teams:lobby", _payload, socket) do
     if authorized?(socket) do
@@ -18,8 +18,7 @@ defmodule SocketsAppWeb.TeamsChannel do
     if authorized?(socket) do
       user = get_user(socket.assigns.user_id)
       send(self(), {:after_join, user, team_id})
-      team = get_team(team_id)
-      {:ok, %{team: team}, socket}
+      {:ok, team_info(team_id), socket}
     else
       {:error, %{reason: "unauthorized"}}
     end
@@ -38,9 +37,21 @@ defmodule SocketsAppWeb.TeamsChannel do
     {:noreply, socket}
   end
 
+  def handle_in("answer_update", %{"answer" => %{"id" => answer_id, "value" => value}}, socket) do
+    case Challenges.update_answer(answer_id, %{value: value}) do
+      {:ok, answer} ->
+        IO.inspect(answer)
+        Endpoint.broadcast("teams:#{answer.team_id}", "answer_updated", %{"answer" => answer, "update_by" => socket.assigns.user_id})
+
+      {:error, err} ->
+        IO.inspect(err)
+    end
+    {:noreply, socket}
+  end
+
   def handle_info({:after_join, user, team}, socket) do
     push(socket, "presence_state", Presence.list(socket))
-    {:ok, _} = Presence.track(socket.transport_pid, "teams:#{team}", "#{user.id}", %{
+    Presence.track(socket.transport_pid, "teams:#{team}", "#{user.id}", %{
       user_id: user.id,
       role: user.role,
       team_id: team,
@@ -58,9 +69,10 @@ defmodule SocketsAppWeb.TeamsChannel do
     Accounts.get_user!(id)
   end
 
-  defp get_team(team_id) do
-    team_id
-    |> Challenges.get_team!()
-    |> Repo.preload([challenge: [:tasks], answers: []])
+  defp team_info(team_id) do
+    team = Challenges.get_team!(team_id) |> Repo.preload(:users)
+    challenge = Challenges.get_challenge!(team.challenge_id) |> Repo.preload([:tasks])
+    answers = Challenges.list_answers(%{team: team, tasks: challenge.tasks})
+    %{team: team, challenge: challenge, answers: answers}
   end
 end

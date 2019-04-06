@@ -4,7 +4,7 @@ defmodule SocketsApp.Challenges.Challenge do
 
   alias SocketsApp.Challenges.Task
 
-  @derive {Jason.Encoder, only: [:id, :name]}
+
   schema "challenges" do
     field :name, :string
 

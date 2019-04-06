@@ -7,13 +7,16 @@ let userChannel
 let currentTeamChannel
 
 function bindTeamListeners(context, channel) {
-
+  channel.on('answer_updated', resp => {
+    console.log(resp)
+    context.commit('setSocketMessage', {key: 'answerUpdated', message: resp})
+  })
 }
 
 function bindUserListeners(context, channel) {
   channel.on('paired', resp => {
     if (resp.team_id) {
-      console.log('joining team', resp)
+      console.log('paired', resp.team_id)
       context.dispatch('joinCurrentTeam', resp.team_id)
     } else {
       console.log('no team provided')
@@ -27,7 +30,6 @@ export default {
     teamsChannel.join()
       .receive("ok", resp => {
         context.commit('setCurrentUser', resp.current_user)
-        bindTeamListeners(context, teamsChannel)
         return context.dispatch('joinUserChannel', resp.current_user)
       })
       .receive("error", resp => 
@@ -42,6 +44,9 @@ export default {
     .receive('ok', () => {
       bindUserListeners(context, userChannel)
       context.commit('setConnected', true)
+      if (user.team_id) {
+        context.dispatch('joinCurrentTeam', user.team_id)
+      }
       return Promise.resolve()
     })
     .receive('error', resp => {
@@ -49,15 +54,27 @@ export default {
       return Promise.reject(resp)
     })
   },
-  joinCurrentTeam({commit}, teamId) {
-    currentTeamChannel = socket.channel('team:' + teamId, {})
+  joinCurrentTeam(context, teamId) {
+    if (currentTeamChannel != undefined) {
+      return
+    }
+    teamId = teamId || state.currentUser.team_id
+    currentTeamChannel = socket.channel('teams:' + teamId, {})
     currentTeamChannel.join()
     .receive('ok', resp => {
-      if (resp.challenge) {
-        commit('setChallenge', challenge)
-        console.log(this._vm)
-        console.log(this._vm.$root)
+      if (resp.team) {
+        context.commit('setTeam', resp.team)
+        context.commit('setChallenge', resp.challenge)
+        context.commit('setAnswers', resp.answers)
+        bindTeamListeners(context, currentTeamChannel)
       }
     })
+    .receive('error', resp => {
+      console.log(resp)
+    })
+  },
+  updateAnswer(context, answer) {
+    console.log(currentTeamChannel)
+    currentTeamChannel.push('answer_update', {answer: answer})
   }
 }

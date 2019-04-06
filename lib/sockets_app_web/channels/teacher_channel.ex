@@ -51,7 +51,7 @@ defmodule SocketsAppWeb.TeacherChannel do
           team_id: team.id,
           task_id: t.id,
           value: ""
-        }) |> IO.inspect()
+        })
       end)
       team
     end)

@@ -309,6 +309,14 @@ defmodule SocketsApp.Challenges do
     Repo.all(Answer)
   end
 
+  def list_answers(%{team: %Team{id: team_id}, tasks: tasks}) do
+    task_ids = Enum.map(tasks, & &1.id)
+    from(a in Answer,
+    where: a.team_id == ^team_id,
+    where: a.task_id in ^task_ids)
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single answer.
 
@@ -359,6 +367,11 @@ defmodule SocketsApp.Challenges do
     answer
     |> Answer.changeset(attrs)
     |> Repo.update()
+  end
+
+  def update_answer(id, attrs) do
+    get_answer!(id)
+    |> update_answer(attrs)
   end
 
   @doc """
