@@ -14,7 +14,8 @@ const state = {
   challenge: null,
   answers: [],
   message: null,
-  socketMessage: null
+  socketMessage: null,
+  chatMessages: []
 }
 
 

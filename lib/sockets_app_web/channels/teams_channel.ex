@@ -49,6 +49,12 @@ defmodule SocketsAppWeb.TeamsChannel do
     {:noreply, socket}
   end
 
+  def handle_in("send_chat_message", %{"message" => message}, socket) do
+    user = get_user(socket.assigns.user_id)
+    Endpoint.broadcast("teams:#{user.team_id}", "new_chat_message", %{from: user.name, message: message})
+    {:noreply, socket}
+  end
+
   def handle_info({:after_join, user, team}, socket) do
     push(socket, "presence_state", Presence.list(socket))
     Presence.track(socket.transport_pid, "teams:#{team}", "#{user.id}", %{

@@ -14,12 +14,15 @@ function bindTeamListeners(context, channel) {
   channel.on('teacher_message', resp => {
     context.commit('setMessage', {type: 'info', message: resp.message})
   })
+
+  channel.on('new_chat_message', resp => {
+    context.commit('addChatMessage', resp)
+  })
 }
 
 function bindUserListeners(context, channel) {
   channel.on('paired', resp => {
     if (resp.team_id) {
-      console.log('paired', resp.team_id)
       context.dispatch('joinCurrentTeam', resp.team_id)
     } else {
       console.log('no team provided')
@@ -77,7 +80,10 @@ export default {
     })
   },
   updateAnswer(context, answer) {
-    console.log(currentTeamChannel)
     currentTeamChannel.push('answer_update', {answer: answer})
+  },
+
+  sendChatMessage(context, message) {
+    currentTeamChannel.push('send_chat_message', {message: message})
   }
 }

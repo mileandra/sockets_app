@@ -25,5 +25,11 @@ export default {
 
   setMessage (state, message) {
     state.message = message
+  },
+
+  addChatMessage (state, message) {
+    let messages = state.chatMessages
+    messages.push(message)
+    state.chatMessages = messages
   }
 }
