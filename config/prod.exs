@@ -11,8 +11,11 @@ use Mix.Config
 # before starting your production server.
 config :sockets_app, SocketsAppWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT") || 4000],
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  url: [scheme: "https", host: "sockets.juliawill.com", port: 443],
+  server: true,
+  root: ".",
+  cache_static_manifest: "priv/static/cache_manifest.json",
+  version: Mix.Project.config[:version]
 
 # Do not print debug messages in production
 config :logger, level: :info

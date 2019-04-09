@@ -24,7 +24,8 @@ defmodule SocketsApp.MixProject do
         :logger,
         :runtime_tools,
         :ecto_enum,
-        :poison
+        :poison,
+        :edeliver
       ]
     ]
   end
@@ -49,7 +50,9 @@ defmodule SocketsApp.MixProject do
       {:jason, "~> 1.0"},
       {:poison, "~> 3.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:ecto_enum, "~> 1.2"}
+      {:ecto_enum, "~> 1.2"},
+      {:distillery, "~> 2.0"},
+      {:edeliver, "~> 1.6"}
     ]
   end
 

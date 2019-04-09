@@ -17,7 +17,9 @@ export default {
   mounted () {
     this.$store.dispatch('join')
       .then(() => {
-        this.$router.push({name: 'new'})
+        if (this.$route.name == 'home') {
+          this.$router.push({name: 'new'})
+        }
       }, err => {
         alert("Unable to join")
       })

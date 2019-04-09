@@ -35,7 +35,6 @@ function sendRequest(channel, method, payload = {}) {
   const promise = new Promise((resolve, reject) => {
     channel.push(method, payload)
       .receive('ok', resp => {
-        console.log('method', resp)
         resolve(resp)
       })
       .receive('error', resp => {
@@ -75,6 +74,13 @@ export default {
   listChallenges () {
     return sendRequest(teacherChannel, 'list_challenges')
   },
+
+  loadChallenge({commit}, challenge_id) {
+    sendRequest(teacherChannel, 'get_challenge', {challenge_id: challenge_id})
+      .then(resp => {
+        commit('setChallenge', resp.challenge)
+      })
+  }, 
 
   pairTeams ({state, commit}, challenge_id) {
     let userIds = []

@@ -9,7 +9,11 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-alias SocketsApp.{Challenges, Repo}
+alias SocketsApp.{Challenges, Repo, Accounts}
+
+unless Repo.get_by(Accounts.User, name: "Julia", role: :teacher) do
+  Accounts.create_user(%{name: "Julia", role: :teacher})
+end
 
 unless Repo.get_by(Challenges.Challenge, name: "Sencha Community Days") do
   {:ok, challenge} = Challenges.create_challenge(%{name: "Sencha Community Days"})

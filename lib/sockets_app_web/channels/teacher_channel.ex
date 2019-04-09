@@ -51,6 +51,12 @@ defmodule SocketsAppWeb.TeacherChannel do
     {:reply, {:ok, %{message: "message_sent"}}, socket}
   end
 
+  # Request a certain challenge by id
+  def handle_in("get_challenge", %{"challenge_id" => challenge_id}, socket) do
+    challenge = Challenges.get_challenge!(challenge_id)
+    {:reply, {:ok, %{challenge: challenge}}, socket}
+  end
+
   defp create_initial_answers(teams, challenge) do
     challenge = Repo.preload(challenge, [:tasks])
 

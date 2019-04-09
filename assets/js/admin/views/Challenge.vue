@@ -24,6 +24,13 @@ export default {
   components: {
     UserList,
     ChallengeMessage
+  },
+  mounted () {
+    const id = this.$route.params.id
+    if (!this.challenge || this.challenge.id !== id) {
+      this.$store.commit('setChallenge', null)
+      this.$store.dispatch('loadChallenge', id)
+    }
   }
 }
 </script>
